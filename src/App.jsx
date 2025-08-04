@@ -1,7 +1,8 @@
 import 'bulma/css/bulma.css';
 import './App.scss';
+import { useState } from 'react';
 
-export const goodsFromServer = [
+const goodsFromServer = [
   'Dumplings',
   'Carrot',
   'Eggs',
@@ -14,33 +15,74 @@ export const goodsFromServer = [
   'Garlic',
 ];
 
-export const App = () => (
-  <div className="section content">
-    <div className="buttons">
-      <button type="button" className="button is-info is-light">
-        Sort alphabetically
-      </button>
+export const App = () => {
+  const [goods, setGoods] = useState([...goodsFromServer]);
 
-      <button type="button" className="button is-success is-light">
-        Sort by length
-      </button>
+  const handleAlphabeticalSort = () => {
+    const sorted = [...goods].sort((a, b) => a.localeCompare(b));
 
-      <button type="button" className="button is-warning is-light">
-        Reverse
-      </button>
+    setGoods(sorted);
+  };
 
-      <button type="button" className="button is-danger is-light">
-        Reset
-      </button>
+  const handleLengthSort = () => {
+    const sorted = [...goods].sort((a, b) => a.length - b.length);
+
+    setGoods(sorted);
+  };
+
+  const handleReverse = () => {
+    const reversed = [...goods].reverse();
+
+    setGoods(reversed);
+  };
+
+  const handleReset = () => {
+    setGoods([...goodsFromServer]);
+  };
+
+  return (
+    <div className="section content">
+      <div className="buttons">
+        <button
+          type="button"
+          className="button is-success is-light"
+          onClick={handleAlphabeticalSort}
+        >
+          Sort alphabetically
+        </button>
+
+        <button
+          type="button"
+          className="button is-success is-light"
+          onClick={handleLengthSort}
+        >
+          Sort by length
+        </button>
+
+        <button
+          type="button"
+          className="button is-success is-light"
+          onClick={handleReverse}
+        >
+          Reverse
+        </button>
+
+        <button
+          type="button"
+          className="button is-danger is-light"
+          onClick={handleReset}
+        >
+          Reset
+        </button>
+      </div>
+
+      <ul>
+        {goods.map(good => (
+          <li data-cy="Good" key={good}>
+            {good}
+          </li>
+        ))}
+      </ul>
     </div>
-
-    <ul>
-      <li data-cy="Good">Dumplings</li>
-      <li data-cy="Good">Carrot</li>
-      <li data-cy="Good">Eggs</li>
-      <li data-cy="Good">Ice cream</li>
-      <li data-cy="Good">Apple</li>
-      <li data-cy="Good">...</li>
-    </ul>
-  </div>
-);
+  );
+};
