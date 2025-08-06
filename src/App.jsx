@@ -1,6 +1,7 @@
 import 'bulma/css/bulma.css';
 import './App.scss';
 import { useState } from 'react';
+import cn from 'classnames';
 
 const goodsFromServer = [
   'Dumplings',
@@ -16,27 +17,41 @@ const goodsFromServer = [
 ];
 
 export const App = () => {
-  const [goods, setGoods] = useState([...goodsFromServer]);
+  const ALPHABETICAL_SORT = 'A';
+  const LENGTH_SORT = 'L';
+  const REVERSE = 'REV';
+  const RESET = null;
 
-  const handleAlphabeticalSort = () => {
+  const [goods, setGoods] = useState([...goodsFromServer]);
+  const [curentVelue, setCurentVelue] = useState(null);
+
+  const AlphabeticalSort = () => {
     const sorted = [...goods].sort((a, b) => a.localeCompare(b));
 
+    setCurentVelue(ALPHABETICAL_SORT);
     setGoods(sorted);
   };
 
-  const handleLengthSort = () => {
-    const sorted = [...goods].sort((a, b) => a.length - b.length);
+  const LengthSort = () => {
+    const sorted = [...goods].sort((a, b) => {
+      return a.length - b.length === 0
+        ? a.localeCompare(b)
+        : a.length - b.length;
+    });
 
+    setCurentVelue(LENGTH_SORT);
     setGoods(sorted);
   };
 
-  const handleReverse = () => {
+  const Reverse = () => {
     const reversed = [...goods].reverse();
 
+    setCurentVelue(REVERSE);
     setGoods(reversed);
   };
 
-  const handleReset = () => {
+  const Reset = () => {
+    setCurentVelue(RESET);
     setGoods([...goodsFromServer]);
   };
 
@@ -45,35 +60,43 @@ export const App = () => {
       <div className="buttons">
         <button
           type="button"
-          className="button is-success is-light"
-          onClick={handleAlphabeticalSort}
+          className={cn('button is-info', {
+            'is-light': curentVelue !== ALPHABETICAL_SORT,
+          })}
+          onClick={AlphabeticalSort}
         >
           Sort alphabetically
         </button>
 
         <button
           type="button"
-          className="button is-success is-light"
-          onClick={handleLengthSort}
+          className={cn('button is-success', {
+            'is-light': curentVelue !== LENGTH_SORT,
+          })}
+          onClick={LengthSort}
         >
           Sort by length
         </button>
 
         <button
           type="button"
-          className="button is-success is-light"
-          onClick={handleReverse}
+          className={cn('button is-warning', {
+            'is-light': curentVelue !== REVERSE,
+          })}
+          onClick={Reverse}
         >
           Reverse
         </button>
 
-        <button
-          type="button"
-          className="button is-danger is-light"
-          onClick={handleReset}
-        >
-          Reset
-        </button>
+        {curentVelue !== null && (
+          <button
+            type="button"
+            className="button is-danger is-light"
+            onClick={Reset}
+          >
+            Reset
+          </button>
+        )}
       </div>
 
       <ul>
