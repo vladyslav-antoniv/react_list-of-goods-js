@@ -16,42 +16,61 @@ const goodsFromServer = [
   'Garlic',
 ];
 
-export const App = () => {
-  const ALPHABETICAL_SORT = 'A';
-  const LENGTH_SORT = 'L';
-  const REVERSE = 'REV';
-  const RESET = null;
+const ALPHABETICAL_SORT = 'A';
+const LENGTH_SORT = 'L';
+const RESET = null;
 
+export const App = () => {
   const [goods, setGoods] = useState([...goodsFromServer]);
   const [curentVelue, setCurentVelue] = useState(null);
+  const [isReverse, setIsReverse] = useState(false);
+
+  function applySort(value, reverse) {
+    let newArr = [...goodsFromServer];
+
+    switch (value) {
+      case ALPHABETICAL_SORT:
+        newArr.sort((a, b) => a.localeCompare(b));
+        break;
+      case LENGTH_SORT:
+        newArr.sort((a, b) => a.length - b.length);
+        break;
+      default:
+        break;
+    }
+
+    if (reverse) {
+      newArr.reverse();
+    }
+
+    setGoods(newArr);
+  }
 
   const AlphabeticalSort = () => {
-    const sorted = [...goods].sort((a, b) => a.localeCompare(b));
+    const newValue =
+      curentVelue === ALPHABETICAL_SORT ? null : ALPHABETICAL_SORT;
 
-    setCurentVelue(ALPHABETICAL_SORT);
-    setGoods(sorted);
+    setCurentVelue(newValue);
+    applySort(newValue, isReverse);
   };
 
   const LengthSort = () => {
-    const sorted = [...goods].sort((a, b) => {
-      return a.length - b.length === 0
-        ? a.localeCompare(b)
-        : a.length - b.length;
-    });
+    const newValue = curentVelue === LENGTH_SORT ? null : LENGTH_SORT;
 
-    setCurentVelue(LENGTH_SORT);
-    setGoods(sorted);
+    setCurentVelue(newValue);
+    applySort(newValue, isReverse);
   };
 
   const Reverse = () => {
-    const reversed = [...goods].reverse();
+    const newReverse = !isReverse;
 
-    setCurentVelue(REVERSE);
-    setGoods(reversed);
+    setIsReverse(newReverse);
+    applySort(curentVelue, newReverse);
   };
 
   const Reset = () => {
     setCurentVelue(RESET);
+    setIsReverse(false);
     setGoods([...goodsFromServer]);
   };
 
@@ -81,14 +100,14 @@ export const App = () => {
         <button
           type="button"
           className={cn('button is-warning', {
-            'is-light': curentVelue !== REVERSE,
+            'is-light': !isReverse,
           })}
           onClick={Reverse}
         >
           Reverse
         </button>
 
-        {curentVelue !== null && (
+        {(curentVelue !== null || isReverse) && (
           <button
             type="button"
             className="button is-danger is-light"
